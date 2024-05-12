@@ -1,0 +1,25 @@
+.card-list {
+  height: calc(100vh - 415px);
+  overflow-y: auto;
+  margin-bottom: 20px;
+
+  @media (min-width: 768px) {
+    height: calc(100vh - 370px);
+  }
+}
+
+.add-cards-content {
+  width: calc(90lvw - 20px) !important;
+  height: calc(80lvh - 70px) !important;
+  overflow-y: auto;
+}
+
+.card-img {
+  width: 150px;
+}
+
+.add-btn:active {
+  filter: brightness(0.5);
+  zoom: 1.10;
+  transition: filter 0.8s ease-in-out, zoom 0.8s ease-in-out;
+}

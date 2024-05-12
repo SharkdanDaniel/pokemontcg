@@ -1,0 +1,96 @@
+<div class="p-4 bg-gray-100 h-full">
+  <div class="container mx-auto">
+    <igx-card>
+      <igx-card-content class="flex flex-col md:flex-row gap-4 justify-between">
+        <p class="text-2xl font-bold mb-4">Baralhos</p>
+        <a [routerLink]="['./criar']" class="w-full md:w-auto">
+          <button class="w-full md:w-auto" igxButton="outlined" igxRipple>
+            Adicionar
+          </button>
+        </a>
+      </igx-card-content>
+    </igx-card>
+    <igx-list
+      [isLoading]="isLoading()"
+      class="list grid mt-5 bg-transparent"
+      [ngClass]="{
+        'gap-2 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5': decks().length
+      }"
+    >
+      <igx-list-item class="bg-transparent" *ngFor="let deck of decks()">
+        <igx-card elevated class="list-item">
+          <p class="text-lg font-semibold" igxCardHeaderTitle>
+            {{ deck.name }}
+          </p>
+          <igx-avatar
+            class="avatar"
+            [src]="deck.cards?.[0]?.images?.small || ''"
+            shape="circle"
+            size="extra"
+          ></igx-avatar>
+          <igx-card-actions class="gap-4">
+            <a [routerLink]="['./detalhes', deck.id]">
+              <button
+                igxIconButton="flat"
+                #target="tooltipTarget"
+                [igxTooltipTarget]="detailsTooltip"
+              >
+                <igx-icon>info</igx-icon>
+              </button>
+              <div #detailsTooltip="tooltip" igxTooltip>
+                Detalhes do baralho
+              </div>
+            </a>
+            <a [routerLink]="['./editar', deck.id]">
+              <button
+                igxIconButton="flat"
+                #target="tooltipTarget"
+                [igxTooltipTarget]="editTooltip"
+                routerLi
+              >
+                <igx-icon>edit</igx-icon>
+              </button>
+            </a>
+            <div #editTooltip="tooltip" igxTooltip>Editar baralho</div>
+            <button
+              igxIconButton="flat"
+              #target="tooltipTarget"
+              [igxTooltipTarget]="deleteTooltip"
+              (click)="openDeleteDialog(deck.id!)"
+            >
+              <igx-icon>delete</igx-icon>
+            </button>
+            <div #deleteTooltip="tooltip" igxTooltip>Excluir baralho</div>
+          </igx-card-actions>
+        </igx-card>
+      </igx-list-item>
+      <ng-template igxEmptyList>
+        <p class="mt-60">Nenhum baralho encontrado!</p>
+      </ng-template>
+    </igx-list>
+  </div>
+</div>
+
+<igx-dialog
+  #deleteDialog
+  title="Remover baralho"
+  message="Tem certeza que quer remover este baralho?"
+>
+  <div igxDialogActions>
+    <button
+      igxButton
+      (click)="deleteDeck()"
+      igxButton="raised"
+      igxButtonColor="white"
+      [disabled]="isBtnLoading()"
+    >
+      <igx-circular-bar
+        *ngIf="isBtnLoading(); else content"
+        [animate]="true"
+        [indeterminate]="true"
+      ></igx-circular-bar>
+      <ng-template #content> Excluir </ng-template>
+    </button>
+    <button igxButton (click)="deleteDialog.close()">Cancelar</button>
+  </div>
+</igx-dialog>

@@ -1,0 +1,75 @@
+<div class="p-4 bg-gray-100 h-full overflow-y-auto">
+  <div class="container mx-auto">
+    <igx-card>
+      <igx-card-content>
+        <div class="flex gap-8 items-center mb-5">
+          <a [routerLink]="['../../']">
+            <button class="flex gap-1 items-center">
+              <igx-icon>chevron_left</igx-icon>
+              <p>Voltar</p>
+            </button>
+          </a>
+          <span class="text-2xl font-bold">{{ deck()?.name }}</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <div class="mb-5">
+              <p class="text-base font-semibold mb-5">Cartas Pokémon</p>
+              <p
+                class="cursor-pointer"
+                *ngFor="let pokemon of pokemonCards()"
+                (click)="openDialogCard(pokemon.images.large)"
+              >
+                ({{ pokemon.count }}) {{ pokemon.name }} (<ng-container
+                  *ngFor="let type of pokemon.types; let i = index"
+                  >{{ i !== pokemon.types.length - 1 ? ", " : ""
+                  }}{{ type }}</ng-container
+                >)
+              </p>
+              <hr class="mt-3" />
+              <p>Total de cartas pokémons {{ pokemonsCount() }}</p>
+              <hr />
+            </div>
+            <div>
+              <p class="text-base font-semibold mb-5">Cartas Energia</p>
+              <p
+                class="cursor-pointer"
+                *ngFor="let energy of energyCards()"
+                (click)="openDialogCard(energy.images.large)"
+              >
+                ({{ energy.count }}) {{ energy.name }}
+              </p>
+              <hr class="mt-3" />
+              <p>Total de cartas energia {{ energiesCount() }}</p>
+              <hr />
+            </div>
+          </div>
+          <div>
+            <div class="mb-5">
+              <p class="text-base font-semibold mb-5">Cartas Treinador</p>
+              <p
+                class="cursor-pointer"
+                *ngFor="let trainer of trainerCards()"
+                (click)="openDialogCard(trainer.images.large)"
+              >
+                ({{ trainer.count }}) {{ trainer.name }}
+              </p>
+              <hr class="mt-3" />
+              <p>Total de cartas treinador {{ trainersCount() }}</p>
+              <hr />
+            </div>
+            <div>
+              <p class="text-base font-semibold mb-5">Tipos Pokémon</p>
+              <p *ngFor="let type of uniqueTypes()">
+                {{ type }}
+              </p>
+              <hr class="mt-3" />
+              <p>Total de tipos pokémon {{ uniqueTypes().size }}</p>
+              <hr />
+            </div>
+          </div>
+        </div>
+      </igx-card-content>
+    </igx-card>
+  </div>
+</div>

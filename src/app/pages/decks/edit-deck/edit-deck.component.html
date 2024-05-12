@@ -1,0 +1,184 @@
+<div class="p-4 bg-gray-100 h-full">
+  <div class="container mx-auto">
+    <igx-card class="mb-4">
+      <igx-card-content class="gap-4">
+        <p class="text-2xl font-bold mb-4">
+          {{ isEditing() ? "Editar baralho" : "Criar baralho" }}
+        </p>
+        <form [formGroup]="form">
+          <igx-input-group class="mb-5">
+            <input
+              type="text"
+              igxInput
+              name="name"
+              formControlName="name"
+              [maxlength]="20"
+            />
+            <label igxLabel for="name">Nome</label>
+          </igx-input-group>
+        </form>
+        <p class="text-base font-semibold mb-5">
+          Cartas adicionadas {{ form.get("cards")?.value?.length }}
+        </p>
+        <button
+          igxButton="outlined"
+          igxRipple
+          type="button"
+          (click)="openAddDialog()"
+          class="min-w-32 mb-4 w-full md:w-auto"
+        >
+          Adicionar
+        </button>
+      </igx-card-content>
+    </igx-card>
+    <div>
+      <igx-list
+        [isLoading]="false"
+        class="card-list grid gap-2 bg-transparent"
+        [ngClass]="{
+          'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5':
+            form.get('cards')?.value?.length && !isSearching()
+        }"
+      >
+        <igx-list-item
+          class="h-fit bg-transparent"
+          *ngFor="let card of form.get('cards')?.value"
+        >
+          <igx-card elevated class="list-item mx-auto text-center">
+            <img
+              class="card-img cursor-pointer"
+              [src]="card.images.small"
+              alt="card"
+              (click)="openDialogCard(card.images.large)"
+            />
+            <button
+              igxIconButton="flat"
+              #target="tooltipTarget"
+              [igxTooltipTarget]="deleteTooltip"
+              (click)="openRemoveDialog(card.id)"
+            >
+              <igx-icon>delete</igx-icon>
+            </button>
+            <div #deleteTooltip="tooltip" igxTooltip>
+              Remover carta do baralho
+            </div>
+          </igx-card>
+        </igx-list-item>
+        <ng-template igxEmptyList>
+          <span class="text-center w-full"
+            >Nenhuma carta adicionada ainda...</span
+          >
+        </ng-template>
+      </igx-list>
+      <div class="flex flex-col md:flex-row gap-4 justify-end">
+        <a [routerLink]="['../../']">
+          <button
+            type="button"
+            class="min-w-32 w-full md:w-auto"
+            igxButton
+            [disabled]="isBtnLoading()"
+          >
+            Cancelar
+          </button>
+        </a>
+        <button
+          type="button"
+          class="min-w-32 w-full md:w-auto"
+          igxButton="raised"
+          igxButtonColor="white"
+          [disabled]="isBtnLoading()"
+          (click)="submit()"
+        >
+          <igx-circular-bar
+            *ngIf="isBtnLoading(); else content"
+            [animate]="true"
+            [indeterminate]="true"
+          ></igx-circular-bar>
+          <ng-template #content> Salvar </ng-template>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- dialogs -->
+<igx-dialog #cardDialog className="add-cards">
+  <igx-dialog-title>
+    <p class="text-lg font-semibold">Adicionar cartas</p>
+  </igx-dialog-title>
+  <div>
+    <igx-input-group class="">
+      <input
+        [formControl]="searchControl"
+        placeholder="Buscar por cartas..."
+        type="search"
+        igxInput
+        name="search"
+      />
+    </igx-input-group>
+    <igx-list
+      class="add-cards-content grid gap-2"
+      [isLoading]="isSearching()"
+      [ngClass]="{
+        'sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5':
+          foundCards().length
+      }"
+    >
+      <igx-list-item class="h-fit" *ngFor="let card of foundCards()">
+        <igx-card elevated class="list-item mx-auto text-center">
+          <img
+            class="card-img cursor-pointer"
+            [src]="card.images.small"
+            alt="card"
+            (click)="openDialogCard(card.images.large)"
+          />
+          <button
+            class="add-btn"
+            igxIconButton="flat"
+            #target="tooltipTarget"
+            [igxTooltipTarget]="addTooltip"
+            (click)="addCard(card)"
+          >
+            <igx-icon>add</igx-icon>
+          </button>
+          <div #addTooltip="tooltip" igxTooltip>Adicionar carta ao baralho</div>
+        </igx-card>
+      </igx-list-item>
+      <ng-template igxEmptyList>
+        <span class="text-center w-full">Nenhuma carta encontrada...</span>
+      </ng-template>
+      <ng-template igxDataLoading="">
+        <span class="text-center w-full">Procurando...</span>
+      </ng-template>
+    </igx-list>
+  </div>
+  <div igxDialogActions>
+    <button
+      type="button"
+      class="min-w-32 w-full md:w-auto"
+      igxButton="raised"
+      igxButtonColor="white"
+      (click)="closeDialog()"
+    >
+      Ok
+    </button>
+  </div>
+</igx-dialog>
+
+<igx-dialog
+  #removeDialog
+  title="Remover carta"
+  message="Tem certeza que quer remover esta carta do baralho?"
+>
+  <div igxDialogActions>
+    <button
+      igxButton
+      (click)="removeCard(removeDialog.id)"
+      igxButton="raised"
+      igxButtonColor="white"
+    >
+      <span>Remover</span>
+    </button>
+    <button igxButton (click)="removeDialog.close()">Cancelar</button>
+  </div>
+</igx-dialog>
